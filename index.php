@@ -4,18 +4,18 @@
 	require_once __DIR__.'/includes/config.php';
 
 	require_once __DIR__.'/admin/includes/managers/tap_manager.php';
-	
+
 	//This can be used to choose between CSV or MYSQL DB
 	$db = true;
-	
+
 	// Setup array for all the beers that will be contained in the list
 	$beers = array();
-	
+
 	if($db){
 		// Connect to the database
 		$con = db();
-		
-		
+
+
 		$config = array();
 		$sql = "SELECT * FROM config";
 		//$qry = mysql_query($sql);
@@ -24,7 +24,7 @@
         while($c = mysqli_fetch_assoc($qry)){
 			$config[$c['configName']] = $c['configValue'];
 		}
-		
+
 		$sql =  "SELECT * FROM vwGetActiveTaps";
 		//$qry = mysql_query($sql);
         $qry = mysqli_query($con, $sql);
@@ -46,9 +46,9 @@
 				"tapNumber" => $b['tapNumber'],
 				"srmRgb" => $b['srmRgb']
 			);
-			$beers[$b['tapNumber']] = $beeritem;	
+			$beers[$b['tapNumber']] = $beeritem;
 		}
-		
+
 		$tapManager = new TapManager();
 		$numberOfTaps = $tapManager->GetTapNumber();
 	}
@@ -63,20 +63,20 @@
 
 		<!-- Set location of Cascading Style Sheet -->
 		<link rel="stylesheet" type="text/css" href="style.css">
-		
+
 		<?php if($config[ConfigNames::UseHighResolution]) { ?>
 			<link rel="stylesheet" type="text/css" href="high-res.css">
 		<?php } ?>
-		
+
 		<link rel="shortcut icon" href="img/pint.ico">
-	</head> 
+	</head>
 
 	<body>
     	<div class="bodywrapper">
         	<!-- Header with Brewery Logo and Project Name -->
             <div class="header clearfix">
                 <div class="HeaderLeft">
-					<?php if($config[ConfigNames::UseHighResolution]) { ?>			
+					<?php if($config[ConfigNames::UseHighResolution]) { ?>
 						<a href="admin/admin.php"><img src="<?php echo $config[ConfigNames::LogoUrl]; ?>" height="200" alt=""></a>
 					<?php } else { ?>
 						<a href="admin/admin.php"><img src="<?php echo $config[ConfigNames::LogoUrl]; ?>" height="100" alt=""></a>
@@ -86,7 +86,7 @@
                     <h1 id="HeaderTitle"><? echo $config[ConfigNames::HeaderText]; ?></h1>
                 </div>
                 <div class="HeaderRight">
-					<?php if($config[ConfigNames::UseHighResolution]) { ?>			
+					<?php if($config[ConfigNames::UseHighResolution]) { ?>
 						<a href="http://www.raspberrypints.com"><img src="img/RaspberryPints-4k.png" height="200" alt=""></a>
 					<?php } else { ?>
 						<a href="http://www.raspberrypints.com"><img src="img/RaspberryPints.png" height="100" alt=""></a>
@@ -94,7 +94,7 @@
                 </div>
             </div>
             <!-- End Header Bar -->
-			
+
 			<table>
 				<thead>
 					<tr>
@@ -103,29 +103,29 @@
 								TAP<br>#
 							</th>
 						<?php } ?>
-						
+
 						<?php if($config[ConfigNames::ShowSrmCol]){ ?>
 							<th class="srm">
 								GRAVITY<hr>COLOR
 							</th>
 						<?php } ?>
-						
+
 						<?php if($config[ConfigNames::ShowIbuCol]){ ?>
 							<th class="ibu">
 								BALANCE<hr>BITTERNESS
 							</th>
 						<?php } ?>
-						
+
 						<th class="name">
 							BEER NAME &nbsp; & &nbsp; STYLE<hr>TASTING NOTES
 						</th>
-						
+
 						<?php if($config[ConfigNames::ShowAbvCol]){ ?>
-							<th class="abv">				
+							<th class="abv">
 								CALORIES<hr>ALCOHOL
 							</th>
 						<?php } ?>
-						
+
 						<?php if($config[ConfigNames::ShowKegCol]){ ?>
 							<th class="keg">
 								POURED<hr>REMAINING
@@ -144,58 +144,58 @@
 										<span class="tapcircle"><?php echo $i; ?></span>
 									</td>
 								<?php } ?>
-							
+
 								<?php if($config[ConfigNames::ShowSrmCol]){ ?>
 									<td class="srm">
 										<h3><?php echo $beer['og']; ?> OG</h3>
-										
+
 										<div class="srm-container">
 											<div class="srm-indicator" style="background-color: rgb(<?php echo $beer['srmRgb'] != "" ? $beer['srmRgb'] : "0,0,0" ?>)"></div>
-											<div class="srm-stroke"></div> 
+											<div class="srm-stroke"></div>
 										</div>
-										
+
 										<h2><?php echo $beer['srm']; ?> SRM</h2>
 									</td>
 								<?php } ?>
-							
+
 								<?php if($config[ConfigNames::ShowIbuCol]){ ?>
 									<td class="ibu">
 										<h3>
-											<?php 
+											<?php
 												if( $beer['og'] > 1 ){
 													echo number_format((($beer['ibu'])/(($beer['og']-1)*1000)), 2, '.', '');
 												}else{
 													echo '0.00';
 												}
-											?> 
+											?>
 											BU:GU
 										</h3>
-										
+
 										<div class="ibu-container">
 											<div class="ibu-indicator"><div class="ibu-full" style="height:<?php echo $beer['ibu'] > 100 ? 100 : $beer['ibu']; ?>%"></div></div>
-												
-											<?php 
+
+											<?php
 												/*
 												if( $remaining > 0 ){
 													?><img class="ibu-max" src="img/ibu/offthechart.png" /><?php
 												}
 												*/
 											?>
-										</div>								
+										</div>
 										<h2><?php echo $beer['ibu']; ?> IBU</h2>
 									</td>
 								<?php } ?>
-							
+
 								<td class="name">
 									<h1><?php echo $beer['beername']; ?></h1>
 									<h2 class="subhead"><?php echo $beer['style']; ?></h2>
 									<p><?php echo $beer['notes']; ?></p>
 								</td>
-							
+
 								<?php if(($config[ConfigNames::ShowAbvCol]) && ($config[ConfigNames::ShowAbvImage])){ ?>
 									<td class="abv">
 										<h3><?php
-											$calfromalc = (1881.22 * ($beer['fg'] * ($beer['og'] - $beer['fg'])))/(1.775 - $beer['og']);									
+											$calfromalc = (1881.22 * ($beer['fg'] * ($beer['og'] - $beer['fg'])))/(1.775 - $beer['og']);
 											$calfromcarbs = 3550.0 * $beer['fg'] * ((0.1808 * $beer['og']) + (0.8192 * $beer['fg']) - 1.0004);
 											if ( ($beer['og'] == 1) && ($beer['fg'] == 1 ) ) {
 												$calfromalc = 0;
@@ -209,18 +209,18 @@
 												$abv = ($beer['og'] - $beer['fg']) * 131;
 												$numCups = 0;
 												$remaining = $abv * 20;
-												do{                                                                
+												do{
 														if( $remaining < 100 ){
 																$level = $remaining;
 														}else{
 																$level = 100;
 														}
-														?><div class="abv-indicator"><div class="abv-full" style="height:<?php echo $level; ?>%"></div></div><?php                                                                
-														
+														?><div class="abv-indicator"><div class="abv-full" style="height:<?php echo $level; ?>%"></div></div><?php
+
 														$remaining = $remaining - $level;
 														$numCups++;
 												}while($remaining > 0 && $numCups < 2);
-												
+
 												if( $remaining > 0 ){
 													?><div class="abv-offthechart"></div><?php
 												}
@@ -229,11 +229,11 @@
 										<h2><?php echo number_format($abv, 1, '.', ',')."%"; ?> ABV</h2>
 									</td>
 								<?php } ?>
-								
+
 								<?php if(($config[ConfigNames::ShowAbvCol]) && ! ($config[ConfigNames::ShowAbvImage])){ ?>
 									<td class="abv">
 										<h3><?php
-											$calfromalc = (1881.22 * ($beer['fg'] * ($beer['og'] - $beer['fg'])))/(1.775 - $beer['og']);									
+											$calfromalc = (1881.22 * ($beer['fg'] * ($beer['og'] - $beer['fg'])))/(1.775 - $beer['og']);
 											$calfromcarbs = 3550.0 * $beer['fg'] * ((0.1808 * $beer['og']) + (0.8192 * $beer['fg']) - 1.0004);
 											if ( ($beer['og'] == 1) && ($beer['fg'] == 1 ) ) {
 												$calfromalc = 0;
@@ -250,11 +250,11 @@
 										<h2><?php echo number_format($abv, 1, '.', ',')."%"; ?> ABV</h2>
 									</td>
 								<?php } ?>
-								
+
 								<?php if($config[ConfigNames::ShowKegCol]){ ?>
 									<td class="keg">
 										<h3><?php echo number_format((($beer['startAmount'] - $beer['remainAmount']) * 128)); ?> fl oz poured</h3>
-										<?php 
+										<?php
 											$kegImgClass = "";
 											$percentRemaining = $beer['remainAmount'] / $beer['startAmount'] * 100;
 											if( $beer['remainAmount'] <= 0 ) {
@@ -285,35 +285,35 @@
 										<span class="tapcircle"><?php echo $i; ?></span>
 									</td>
 								<?php } ?>
-							
+
 								<?php if($config[ConfigNames::ShowSrmCol]){ ?>
 									<td class="srm">
-										<h3></h3>										
+										<h3></h3>
 										<div class="srm-container">
 											<div class="srm-indicator"></div>
-											<div class="srm-stroke"></div> 
+											<div class="srm-stroke"></div>
 										</div>
-										
+
 										<h2></h2>
 									</td>
 								<?php } ?>
-							
+
 								<?php if($config[ConfigNames::ShowIbuCol]){ ?>
 									<td class="ibu">
-										<h3></h3>										
+										<h3></h3>
 										<div class="ibu-container">
 											<div class="ibu-indicator"><div class="ibu-full" style="height:0%"></div></div>
-										</div>								
+										</div>
 										<h2></h2>
 									</td>
 								<?php } ?>
-							
+
 								<td class="name">
 									<h1>Nothing on tap</h1>
 									<h2 class="subhead"></h2>
 									<p></p>
 								</td>
-							
+
 								<?php if($config[ConfigNames::ShowAbvCol]){ ?>
 									<td class="abv">
 										<h3></h3>
@@ -323,7 +323,7 @@
 										<h2></h2>
 									</td>
 								<?php } ?>
-							
+
 								<?php if($config[ConfigNames::ShowKegCol]){ ?>
 									<td class="keg">
 										<h3></h3>
